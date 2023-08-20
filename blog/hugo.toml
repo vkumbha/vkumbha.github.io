@@ -1,0 +1,67 @@
+baseURL = "https://vkumbha.github.io/"
+languageCode = "en-us"
+title = "venu's blog"
+theme = "anubis"
+paginate = 3
+
+disqusShortname = ""
+googleAnalytics = ""
+
+[author]
+name = "Venu"
+
+[params]
+author = "Venu"
+description = "a blog by venu"
+dateFormat = "2006-01-02"
+paginationSinglePost = true
+style = "dark"
+readMore = true
+readNextPosts = 2
+copyCodeButton = true
+rssAsSocialIcon = false #TODO
+mathjax = false
+
+# Graphcomment support
+graphcommentId = ""
+
+# utteranc.es support
+utterancesRepo = ""  # mandatory
+utterancesTheme = "" # optional
+utterancesIssue = "" # optional
+utterancesLabel = "" # optional
+
+[[params.social]]
+id = "github"
+url = "https://github.com/vkumbha"
+
+[[params.social]]
+id = "linkedin"
+url = "https://www.linkedin.com/in/vkumbha"
+
+[menu]
+
+[[menu.main]]
+identifier = "about"
+name = "About"
+url = "/about/"
+weight = 1
+
+[[menu.main]]
+identifier = "tags"
+name = "Tags"
+url = "/tags/"
+weight = 2
+
+[[menu.main]]
+name = "Archive"
+identifier = "archive"
+url = "/posts/"
+weight = 3
+
+[taxonomies]
+category = "categories"
+tag = "tags"
+
+[markup.goldmark.renderer]
+unsafe = true

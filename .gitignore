@@ -1,3 +1,6 @@
+# Hugo files
+public
+
 # Local .terraform directories
 **/.terraform/*
 
@@ -32,3 +35,9 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Swap files
+*.swp
+
+# Ignore Apple custom attributes file
+.DS_Store
