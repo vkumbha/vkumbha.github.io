@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>venu&#39;s blog</title>
+    <link>https://vkumbha.github.io/</link>
+    <description>venu&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 20 Aug 2023 20:20:34 +0530</lastBuildDate>
+    
+    <atom:link href="https://vkumbha.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>AWS Public IPv4 Charge</title>
+      <link>https://vkumbha.github.io/posts/2023-08/ipv4-charges/2023-08-20-aws-ipv4-charges/</link>
+      <pubDate>Sun, 20 Aug 2023 20:20:34 +0530</pubDate>
+      
+      <guid>https://vkumbha.github.io/posts/2023-08/ipv4-charges/2023-08-20-aws-ipv4-charges/</guid>
+      <description>&lt;p&gt;AWS has recently &lt;a href=&#34;https://aws.amazon.com/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights&#34;&gt;announced&lt;/a&gt; a new charge for public IPv4 addresses (effective February 1, 2024). There will be a charge of $0.005 per IP per hour for all public IPv4 addresses, whether attached to a service or not (there is already a charge for public IPv4 addresses you allocate in your account but don’t attach to an EC2 instance).&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://steampipe.io/&#34;&gt;Steampipe&lt;/a&gt; is an open source CLI to instantly query cloud APIs using SQL. We will track the usage of public IPv4 addresses using Steampipe and answer questions like:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How many Public IPv4 addresses do I have?&lt;/li&gt;
+&lt;li&gt;How many Public IPv4 addresses are unassociated?&lt;/li&gt;
+&lt;li&gt;How much does it cost for my Public IPs today?&lt;/li&gt;
+&lt;li&gt;How much will it cost with the new charge?&lt;/li&gt;
+&lt;li&gt;How many Public IPs do I have by Account/Region?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There is good &lt;a href=&#34;https://steampipe.io/docs&#34;&gt;documentation&lt;/a&gt; available on Steampipe &lt;a href=&#34;https://steampipe.io/downloads&#34;&gt;installation&lt;/a&gt; and initial setup process, so we will skip these topics here. Use the &lt;a href=&#34;https://hub.steampipe.io/plugins/turbot/aws&#34;&gt;AWS plugin&lt;/a&gt; to query the tables &lt;a href=&#34;https://hub.steampipe.io/plugins/turbot/aws/tables/aws_ec2_network_interface&#34;&gt;aws_ec2_network_interface&lt;/a&gt; and
+&lt;a href=&#34;https://hub.steampipe.io/plugins/turbot/aws/tables/aws_vpc_eip&#34;&gt;aws_vpc_eip&lt;/a&gt; to get the list of Public IPs. With the magic of Steampipe &lt;a href=&#34;https://steampipe.io/docs/managing/connections#using-aggregators&#34;&gt;aggregators&lt;/a&gt; we can run this query across multiple AWS Accounts.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-code&#34; data-lang=&#34;code&#34;&gt;+----------------+--------------+--------------------+-----------------------+-----------------------+---------------------+--------------+--------------+
+| public_ip      | association  | address_type       | interface_type        | network_interface_id  | instance_id         | region       | account_id   |
++----------------+--------------+--------------------+-----------------------+-----------------------+---------------------+--------------+--------------+
+| 44.206.99.154  | unassociated | amazon-owned-eip   | &amp;lt;null&amp;gt;                | &amp;lt;null&amp;gt;                | &amp;lt;null&amp;gt;              | us-east-1    | 111111111111 |
+| 52.202.225.236 | unassociated | amazon-owned-eip   | &amp;lt;null&amp;gt;                | &amp;lt;null&amp;gt;                | &amp;lt;null&amp;gt;              | us-east-1    | 222222222222 |
+| 3.111.86.122   | associated   | service-managed-ip | interface             | eni-06fa98dd7f0ff1a1d | &amp;lt;null&amp;gt;              | ap-south-1   | 222222222222 |
+| 35.183.106.227 | associated   | ec2-public-ip      | interface             | eni-06f3d6d90aee0f005 | i-0d98957aee2d7d1bd | ca-central-1 | 333333333333 |
+| 3.134.222.98   | associated   | service-managed-ip | interface             | eni-08bccb4b941da6010 | &amp;lt;null&amp;gt;              | us-east-2    | 111111111111 |
+| 3.19.237.204   | associated   | ec2-public-ip      | interface             | eni-0287182521cfc23c8 | i-01e86206a2c566752 | us-east-2    | 111111111111 |
+| 52.66.93.50    | associated   | service-managed-ip | network_load_balancer | eni-0a9029ff2db152e69 | &amp;lt;null&amp;gt;              | ap-south-1   | 222222222222 |
+| 43.204.162.129 | associated   | amazon-owned-eip   | interface             | eni-07eb1e0a407c7f9d6 | &amp;lt;null&amp;gt;              | ap-south-1   | 222222222222 |
+| 3.133.51.95    | associated   | amazon-owned-eip   | interface             | eni-0287182521cfc23c8 | i-01e86206a2c566752 | us-east-2    | 111111111111 |
+| 18.218.66.176  | associated   | amazon-owned-eip   | nat_gateway           | eni-0e3c7b42340998899 | &amp;lt;null&amp;gt;              | us-east-2    | 111111111111 |
+| 3.111.178.87   | associated   | amazon-owned-eip   | nat_gateway           | eni-078e7cd030817b0c8 | &amp;lt;null&amp;gt;              | ap-south-1   | 222222222222 |
+| 15.206.57.234  | associated   | service-managed-ip | network_load_balancer | eni-05133c7d9ce3aa1b5 | &amp;lt;null&amp;gt;              | ap-south-1   | 222222222222 |
++----------------+--------------+--------------------+-----------------------+-----------------------+---------------------+--------------+--------------+
+&lt;/code&gt;&lt;/pre&gt;&lt;details&gt;
+  &lt;summary&gt;Here&#39;s the query to capture the list of Public IPs.&lt;/summary&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  association_public_ip &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; public_ip,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;case&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;when&lt;/span&gt; attachment_status &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;detaching&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;detached&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;unassociated&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;when&lt;/span&gt; attachment_status &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;attaching&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;attached&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;associated&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; association,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;case&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;when&lt;/span&gt; attached_instance_id &lt;span style=&#34;color:#66d9ef&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;not&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ec2-public-ip&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;when&lt;/span&gt; attached_instance_id &lt;span style=&#34;color:#66d9ef&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;service-managed-ip&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; address_type,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  interface_type,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  network_interface_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  attached_instance_id &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; instance_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  region,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  account_id
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;from&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  aws_ec2_network_interface
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;where&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  association_public_ip &lt;span style=&#34;color:#66d9ef&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;not&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;and&lt;/span&gt; association_allocation_id &lt;span style=&#34;color:#66d9ef&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;UNION&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;ALL&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  public_ip,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;case&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;when&lt;/span&gt; association_id &lt;span style=&#34;color:#66d9ef&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;unassociated&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;when&lt;/span&gt; association_id &lt;span style=&#34;color:#66d9ef&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;not&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;associated&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; association,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;case&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;when&lt;/span&gt; public_ipv4_pool &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;amazon&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;amazon-owned-eip&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;byoip&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; address_type,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;case&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;when&lt;/span&gt; network_interface_id &lt;span style=&#34;color:#66d9ef&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;not&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; interface_type 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;from&lt;/span&gt; aws_ec2_network_interface
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;where&lt;/span&gt; network_interface_id &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; aws_vpc_eip.network_interface_id)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;when&lt;/span&gt; network_interface_id &lt;span style=&#34;color:#66d9ef&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; network_interface_id
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; interface_type,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  network_interface_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  instance_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  region,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  account_id
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;from&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  aws_vpc_eip
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;order&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;by&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  association &lt;span style=&#34;color:#66d9ef&#34;&gt;desc&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/details&gt;
+&lt;p&gt;Use &lt;a href=&#34;https://steampipe.io/docs/dashboard/overview#steampipe-dashboards&#34;&gt;Steampipe Dashboard&lt;/a&gt; for fancy visualization like AWS Public IP insights. &lt;a href=&#34;https://github.com/vkumbha/vkumbha.github.io/tree/main/samples/ipv4-charges/&#34;&gt;Here&lt;/a&gt; is the sample mod used to generate the following.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../public-ips-insights-dashboard.png&#34; alt=&#34;steampipe-dashboard&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Dive into meaningful and data-driven insights by leveraging SQL with Steampipe. Happy Querying!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://vkumbha.github.io/about/</link>
+      <pubDate>Mon, 31 Jul 2023 10:49:34 +0530</pubDate>
+      
+      <guid>https://vkumbha.github.io/about/</guid>
+      <description>&lt;p&gt;I am Venu.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Hello World!</title>
+      <link>https://vkumbha.github.io/posts/2023-07/welcome/2023-07-31-welcome/</link>
+      <pubDate>Mon, 31 Jul 2023 10:49:34 +0530</pubDate>
+      
+      <guid>https://vkumbha.github.io/posts/2023-07/welcome/2023-07-31-welcome/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;../attempt.jpg&#34; alt=&#34;attempt.jpg&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hello on venu&#39;s blog</title>
+    <link>https://vkumbha.github.io/tags/hello/</link>
+    <description>venu&#39;s blog (hello)</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 31 Jul 2023 10:49:34 +0530</lastBuildDate>
+    
+    <atom:link href="https://vkumbha.github.io/tags/hello/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hello World!</title>
+      <link>https://vkumbha.github.io/posts/2023-07/welcome/2023-07-31-welcome/</link>
+      <pubDate>Mon, 31 Jul 2023 10:49:34 +0530</pubDate>
+      
+      <guid>https://vkumbha.github.io/posts/2023-07/welcome/2023-07-31-welcome/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;../attempt.jpg&#34; alt=&#34;attempt.jpg&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
