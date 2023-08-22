@@ -13,7 +13,7 @@ name = "Venu"
 [params]
 author = "Venu"
 description = "a blog by venu"
-dateFormat = "2006-01-02"
+dateFormat = "January 02, 2006"
 paginationSinglePost = true
 style = "dark"
 readMore = true

@@ -5,6 +5,14 @@
 {{ $machineDateFormat := "2006-01-02" }}
 
 <div class="post-info">
+    {{ if .Params.tags }}
+    <ul class="post-tags">
+        {{ range $tag_name := .Params.tags }}
+            {{ $tag := ($.Site.GetPage (printf "/tags/%s" $tag_name | urlize )) }}
+            <li style="float: right"><a href="{{ $tag.Permalink }}">#{{ $tag.Title | default $tag_name }}</a></li>
+        {{ end }}
+    </ul>
+    {{ end }}
     {{ if .Params.date }}
         <div class="post-date dt-published">
             <a class="u-url" href="{{ .RelPermalink }}"><time datetime="{{ .Params.date.Format $machineDateFormat }}">
@@ -17,14 +25,7 @@
             {{- end }}
         </div>
     {{ end }}
-    {{ if .Params.tags }}
-    <ul class="post-tags">
-        {{ range $tag_name := .Params.tags }}
-            {{ $tag := ($.Site.GetPage (printf "/tags/%s" $tag_name | urlize )) }}
-            <li style="float: right"><a href="{{ $tag.Permalink }}">#{{ $tag.Title | default $tag_name }}</a></li>
-        {{ end }}
-    </ul>
-    {{ end }}
+
 
     <a class="post-hidden-url u-url" href="{{ .Permalink }}">{{ .Permalink }}</a>
     <a href="{{ .Site.BaseURL }}" class="p-name p-author post-hidden-author h-card" rel="me">{{ .Params.author | default .Site.Params.author }}</a>
