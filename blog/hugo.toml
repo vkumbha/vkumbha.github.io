@@ -41,25 +41,11 @@ url = "https://github.com/vkumbha"
 id = "linkedin"
 url = "https://www.linkedin.com/in/vkumbha"
 
-[menu]
-
-[[menu.main]]
-identifier = "about"
-name = "About"
+[[params.social]]
+id = "about-me"
 url = "/about/"
-weight = 1
 
-[[menu.main]]
-identifier = "tags"
-name = "Tags"
-url = "/tags/"
-weight = 2
-
-[[menu.main]]
-name = "Archive"
-identifier = "archive"
-url = "/posts/"
-weight = 3
+[menu]
 
 [taxonomies]
 category = "categories"
