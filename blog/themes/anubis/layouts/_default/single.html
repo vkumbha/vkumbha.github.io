@@ -10,6 +10,7 @@
     <article class="post h-entry">
         <div class="post-header">
             <header>
+                {{ partial "post-info.html" . }}
                 <h1 class="p-name post-title{{ if .Params.favorite }} favorite{{end}}{{ if .Params.draft }} draft{{end}}">{{ trim .Title  " " }}</h1>
 
                 {{ partial "post-language-switcher.html" . }}
@@ -19,7 +20,7 @@
         <div class="content e-content">
             {{ .Content }}
         </div>
-        {{ partial "post-info.html" . }}
+        <!-- {{ partial "post-info.html" . }} -->
     </article>
 
     {{ if gt .Site.Params.readNextPosts 0 }}
