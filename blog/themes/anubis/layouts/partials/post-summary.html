@@ -10,13 +10,14 @@
     {{ if not .Site.Params.disableSummary }}
         <div class="content post-summary p-summary">
             {{ .Summary | safeHTML }}
+            {{ if and (.Truncated) (.Site.Params.readMore) }}<a class="u-url" href="{{ .RelPermalink }}">{{ i18n "readMore" }}</a>{{ end }}
         </div>
     {{ end }}
-    {{ if and (.Truncated) (.Site.Params.readMore) }}
+    <!-- {{ if and (.Truncated) (.Site.Params.readMore) }}
         <div class="read-more">
             <a class="u-url" href="{{ .RelPermalink }}">{{ i18n "readMore" }}</a>
         </div>
-    {{ end }}
+    {{ end }} -->
     
     <!-- {{ partial "post-info.html" . }} -->
 </article>
