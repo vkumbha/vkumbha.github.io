@@ -31,6 +31,8 @@ utterancesTheme = "" # optional
 utterancesIssue = "" # optional
 utterancesLabel = "" # optional
 
+giscusRepo = "true"  # mandatory
+
 [[params.social]]
 id = "github"
 url = "https://github.com/vkumbha"
